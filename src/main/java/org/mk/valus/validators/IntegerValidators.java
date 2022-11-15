@@ -5,6 +5,9 @@ import org.mk.valus.predicators.IntegerPredicators;
 
 public class IntegerValidators {
     public static Validator<Integer> isGreaterThen(int nr) {
-        return Validator.from(IntegerPredicators.isGreaterThan(nr), i -> String.format("Int value is '%d', but value greater than %d was expected", i, nr));
+        return Validator.from(
+                IntegerPredicators.isGreaterThan(nr),
+                i -> String.format("Int value is '%d', but value greater than %d was expected", i, nr),
+                ErrorCodes.IS_LESS_OR_EQUAL);
     }
 }

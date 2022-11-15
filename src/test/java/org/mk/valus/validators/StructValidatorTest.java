@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.mk.valus.StructValidator;
-import org.mk.valus.ValidationError;
+import org.mk.valus.ValidatorStructError;
 
 import java.util.List;
 
@@ -14,17 +14,20 @@ public class StructValidatorTest {
 
     @Test
     public void userValidationTest() {
-        Address address = new Address("Długa", "33-333");
+        Address address = new Address("Długa", "33-3331");
         User u = new User("John", "Doe", 25, address);
 
-        StructValidator<Address> vAddress = StructValidator.from("postcode", Address::getPostcode, StringValidators.isNull());
+        StructValidator<Address> vAddress = StructValidator.all(
+                StructValidator.from("postcode", Address::getPostcode, StringValidators.isPostcode()),
+                StructValidator.from("street", Address::getStreet, StringValidators.isNull())
+        );
 
         StructValidator<User> v = StructValidator.all(
                 StructValidator.from("firstName", User::getFirstName, StringValidators.isNull()),
                 StructValidator.from("age", User::getAge, IntegerValidators.isGreaterThen(30)),
                 StructValidator.sub("address", User::getAddress, vAddress)
         );
-        List<ValidationError> errorList = v.validate(u);
+        List<ValidatorStructError> errorList = v.validate(u);
         log.info("{}", errorList);
     }
 

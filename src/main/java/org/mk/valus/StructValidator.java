@@ -11,15 +11,15 @@ import java.util.stream.Collectors;
 
 public interface StructValidator<T> {
 
-    List<ValidationError> validate(T t);
+    List<ValidatorStructError> validate(T t);
 
     static <T,R> StructValidator<T> from(String fieldName, Function<T,R> getter, Validator<R> validator) {
         return t ->
                 validator.validate(getter.apply(t))
-                        .map(msg -> List.of(ValidationError.builder()
-                                .code(0)
+                        .map(validatorError -> List.of(ValidatorStructError.builder()
+                                .code(validatorError.getCode())
                                 .forField(fieldName)
-                                .description(msg)
+                                .description(validatorError.getDescription())
                                 .build()))
                         .orElse(Collections.emptyList());
     }
@@ -44,10 +44,10 @@ public interface StructValidator<T> {
         private StructValidator<R> subValidator;
 
         @Override
-        public List<ValidationError> validate(T t) {
+        public List<ValidatorStructError> validate(T t) {
             return subValidator.validate(getter.apply(t))
                     .stream()
-                    .map(ve -> ValidationError
+                    .map(ve -> ValidatorStructError
                             .builder()
                             .code(ve.getCode())
                             .forField(fieldName + "->" + ve.getForField())
