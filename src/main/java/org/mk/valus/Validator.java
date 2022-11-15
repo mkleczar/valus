@@ -1,22 +1,15 @@
 package org.mk.valus;
 
-import java.util.function.Predicate;
+import java.util.Optional;
+import java.util.function.Function;
 
 public interface Validator<T> {
+    Optional<String> validate(T t);
 
-    boolean isValid(T t);
-
-    static <T> Validator<T> from(Predicate<T> predicate) {
-        return predicate::test;
+    static <T> Validator<T> from(Predicator<T> basePredicator, Function<T, String> errorDescription) {
+        return t ->
+            basePredicator.isValid(t) ?
+                    Optional.empty() :
+                    Optional.of(errorDescription.apply(t));
     }
-
-    static <T> Validator<T> not(Validator<T> validator) {
-        return t -> !validator.isValid(t);
-    }
-
-    static <T> Validator<T> and(Validator<T> v1, Validator<T> v2) {
-        return t -> v1.isValid(t) && v2.isValid(t);
-    }
-
-
 }
