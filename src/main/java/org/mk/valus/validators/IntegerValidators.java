@@ -10,4 +10,11 @@ public class IntegerValidators {
                 i -> String.format("Int value is '%d', but value greater than %d was expected", i, nr),
                 ErrorCodes.IS_LESS_OR_EQUAL);
     }
+
+    public static Validator<Integer> isLessThen(int nr) {
+        return Validator.from(
+                IntegerPredicators.isLessThan(nr),
+                i -> String.format("Int value is '%d', but value less than %d was expected", i, nr),
+                ErrorCodes.IS_GREATER_OR_EQUAL);
+    }
 }

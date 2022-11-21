@@ -36,6 +36,16 @@ public interface StructValidator<T> {
                 .collect(Collectors.toList());
     }
 
+    // test to first error
+    @SafeVarargs
+    static <T> StructValidator<T> any(StructValidator<T> ... vals) {
+        return t -> Arrays.stream(vals)
+                .map(v -> v.validate(t))
+                .filter(list -> !list.isEmpty())
+                .findAny()
+                .orElse(Collections.emptyList());
+    }
+
     @AllArgsConstructor
     static class SubValidator<T,R> implements StructValidator<T> {
 

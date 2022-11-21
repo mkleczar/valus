@@ -9,6 +9,8 @@ import org.mk.valus.ValidatorStructError;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Slf4j
 public class StructValidatorTest {
 
@@ -45,5 +47,17 @@ public class StructValidatorTest {
     static class Address {
         private String street;
         private String postcode;
+    }
+
+    @Test
+    public void anyValidatorTest() {
+        Address address = new Address(null, null);
+        StructValidator<Address> vAddress = StructValidator.any(
+                StructValidator.from("postcode", Address::getPostcode, StringValidators.isNotNull()),
+                StructValidator.from("street", Address::getStreet, StringValidators.isNotNull())
+        );
+        List<ValidatorStructError> errorList = vAddress.validate(address);
+        assertThat(errorList).hasSize(1)
+                .element(0).extracting(ValidatorStructError::getForField).isEqualTo("postcode");
     }
 }

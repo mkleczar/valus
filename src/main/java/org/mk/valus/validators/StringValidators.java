@@ -12,6 +12,12 @@ public class StringValidators {
                 ErrorCodes.STRING_NOT_NULL);
     }
 
+    public static Validator<String> isNotNull() {
+        return Validator.from(
+                StringPredicators.isNotNull(),
+                str -> String.format("String value is '%s', but not null value was expected", str),
+                ErrorCodes.STRING_IS_NULL);
+    }
     public static Validator<String> isPostcode() {
         String postcodeRegex = "\\d{2}-\\d{3}";
         return Validator.from(
